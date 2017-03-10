@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>R Package</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Zhao Xue" />
+    <link rel="stylesheet" href="zh-CN.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R Package
+## RStudio makes it easier!
+### Zhao Xue
+### 2017/03/01
+
+---
+
+class: inverse, center, middle
+
+# GO！
+
+---
+class: inverse, center, middle
+
+# STEP1 Creating a package
+
+---
+
+First install **devtools**:
+
+```r
+if (!requireNamespace("devtools"))
+        install.packages('devtools')
+```
+You can use `RStudio`:
+- `Rstudio -&gt; File -&gt; New Project`.
+- `New Directory -&gt; R package`.
+-  Click `Creat Project`.
+
+Alternatively, you can create a new package from within `R` by running:
+
+```r
+devtools::create("path/to/package/pkgname")
+```
+Either route gets you to the same place: the smallest usable package, one with three components:
+1. An `R/` directory
+1. A basic `DESCRIPTION` file 
+1. A basic `NAMESPACE` file
+---
+## Naming your package
+*“There are only two hard things in Computer Science: cache invalidation and naming things.”*
+*— Phil Karlton*
+###**Requirements**:
+1. Only consist of **letters**, **numbers** and **periods**, i.e., **.**;
+1. Start with a letter; 
+1. Do not end with a period.
+1. No hyphens nor underscores, i.e.,  **-** or **_**.
+1. Recommend against using periods in package names.(because it has confusing connotations (i.e., file extension or S3 method).) 
+---
+class: inverse, center, middle
+
+# STEP2 Editing 
+## R/
+## DESCRIPTION
+## NAMESPACE
+## man/
+---
+# DESCRIPTION
+###*Every package must have a DESCRIPTION!*
+1. `devtools::create("mypackage")`
+1. Or do some editing directly in it.
+###Contents:
+- **Title and description**: What does your package do?
+- **Author**: who are you?
+- **Dependencies**: What does your package need?
+- **License**: Who can use your package?
+- **Other components...**
+
+---
+# R/
+## Organising your functions
+- File names should be meaningful and end in `.R`.
+- Do not use subdirectories inside `R/`.
+- Do not put all functions into one file.
+- Do not put each function into its own separate file.
+- Examples:
+
+```r
+# Good
+fit_models.R
+utility_functions.R
+
+# Bad
+foo.r
+stuff.r
+```
+---
+# R/
+### Spacing
+### Curly braces
+### Assignment
+### *...*
+
+#### REFERENCES:
+- **formatR**  by 谢益辉
+- **lintr**  by Jim Hester
+---
+# man/
+- Accessed by `?` or `help()`.
+- `Roxygen2` turns specially formatted comments into `.Rd` files.
+- `Roxygen2` can also manage your `NAMESPACE`.
+###Workflow
+1. Add `roxygen comments` to your `.R` files.
+1. Run `devtools::document()` to convert roxygen comments to `.Rd` files.
+(`devtools::document()` calls `roxygen2::roxygenise()` to do the hard work.)
+1. Preview documentation with `?`.
+1. Rinse and repeat until the documentation looks the way you want.
+---
+# man/
+### Roxygen comments
+Roxygen comments start with **`#'`** and come before a function.And all objects must have a **title** and **description** in the introduction block.
+### Documenting functions
+Most functions have three tags: `@param`, `@examples` and `@return`.
+### Documenting datasets
+Documenting data is like documenting a function, and document the **name** of the dataset and save it in `R/`.
+---
+- Two additional importmant tags:
+1. **@format** gives an overview of the dataset. For data frames, you should include a definition list that describes each variable. 
+1. **@source** provides details of where you got the data, often a `\url{}`.
+- **NOTE** : Never **@export** a dataset!
+### Exported data
+- The most common location : `data/`.
+- File type: `.RData` (fast, small and explicit).
+- The easiest way to adhere to these rules is to use `devtools::use_data()`:
+
+
+```r
+x &lt;- sample(1000)
+devtools::use_data(x, mtcars)
+```
+If the `DESCRIPTION` contains `LazyData: true`, then datasets will be lazily loaded. This means that they won’t occupy any memory until you use them.
+---
+# man/
+## Documenting packages
+
+- You can use roxygen to provide a help page for your package as a whole. 
+- Accessed with `?foo`.
+- There’s no object that corresponds to a package, so you need to document `NULL`.
+- Manually label it with `@docType package` and `@name &lt;package-name&gt;`. 
+- Suggest to use the `@section` tag to divide up page into useful categories.
+- Put this documentation in `&lt;package-name&gt;.R`.
+
+---
+# NAMESPACE
+Without knowing it, you’ve probably already used namespaces. 
+- For example, have you ever used the `::` operator? It disambiguates functions with the same name, like `Hmisc::summarize()` and `plyr::summarize()`.
+- Namespaces make your packages self-contained in two ways: the `imports` and the `exports`.
+####**Imports**
+NAMESPACE controls which external functions can be used by your package.
+####**Exports**
+To export an object, put `@export` in its roxygen block. 
+- For example:
+
+```r
+#' @export
+foo &lt;- function(x, y, z) {
+  ...
+}
+```
+---
+class: inverse, center, middle
+background-position: 50% 50%
+# STEP3 Build
+---
+## Build
+- Click **Build** button.
+- Click **Build &amp; Reload** 和 **Check** (`R CMD`).
+- Or `devtools::check()` and `devtools::build()`.
+
+```r
+install.packages(path,repos = NULL,type,...)
+```
+
+```r
+library(package-name)
+```
+
+```r
+data(package='package-name')
+```
+**. . .**
+.footnote[
+[1] [**Welcome R packages**](http://r-pkgs.had.co.nz/)  
+[2] [**Writing R Extensions**](https://cran.r-project.org/doc/manuals/R-exts.html#Rd-format)
+]
+---
+class: inverse, center, middle
+# END
+##THANK YOU GUYS!
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('showSlide', function (slide) {setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 100)});</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
